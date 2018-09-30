@@ -212,7 +212,8 @@ if __name__ == '__main__':
 			strides=[1],
 			b_norm=True,
 			verbose=True,
-			scope=scope
+			scope=scope,
+			plm=True
 			)
 		out_pcl = decoder_with_fc_only(z_latent_pcl, layer_sizes=[256,256,np.prod([NUM_POINTS, 3])],
 			b_norm=FLAGS.bn_decoder,

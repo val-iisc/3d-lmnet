@@ -16,7 +16,7 @@ from tf_utils import expand_scope_by_name, replicate_parameter_for_all_layers
 def encoder_with_convs_and_symmetry(in_signal, n_filters=[64, 128, 256, 1024], filter_sizes=[1], strides=[1],
                                         b_norm=True, non_linearity=tf.nn.relu, regularizer=None, weight_decay=0.001,
                                         symmetry=tf.reduce_max, dropout_prob=None, pool=avg_pool_1d, pool_sizes=None, scope=None,
-                                        reuse=False, padding='same', verbose=False, closing=None, conv_op=conv_1d):
+                                        reuse=False, padding='same', verbose=False, closing=None, conv_op=conv_1d, plm=False):
     '''An Encoder (recognition network), which maps inputs onto a latent space.
     '''
 
@@ -31,7 +31,8 @@ def encoder_with_convs_and_symmetry(in_signal, n_filters=[64, 128, 256, 1024], f
     if n_layers < 2:
         raise ValueError('More than 1 layers are expected.')
 
-    for i in xrange(n_layers):
+    _range = (n_layers - 1) if plm else n_layers
+    for i in xrange(_range):
         if i == 0:
             layer = in_signal
 
@@ -73,7 +74,16 @@ def encoder_with_convs_and_symmetry(in_signal, n_filters=[64, 128, 256, 1024], f
         layer = closing(layer)
         print layer
 
-    return layer
+    if not plm:
+        return layer
+    else:
+        name = 'encoder_z_mean'
+        scope = expand_scope_by_name(scope, name)
+        z_mean = fully_connected(layer, n_filters[-1], activation='linear', weights_init='xavier', name=name, regularizer=None, weight_decay=weight_decay, reuse=reuse, scope=scope)
+        name = 'encoder_z_log_sigma_sq'
+        scope = expand_scope_by_name(scope, name)
+        z_log_sigma_sq = fully_connected(layer, n_filters[-1], activation='softplus', weights_init='xavier', name=name, regularizer=None, weight_decay=weight_decay, reuse=reuse, scope=scope)
+        return z_mean, z_log_sigma_sq
 
 
 def decoder_with_fc_only(latent_signal, layer_sizes=[], b_norm=True, non_linearity=tf.nn.relu,
