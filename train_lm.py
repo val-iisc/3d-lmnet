@@ -47,7 +47,6 @@ WIDTH = 128 						# Width of input RGB image
 
 
 def fetch_batch(models, indices, batch_num, batch_size):
-
 	'''
 	Input:
 		models: list of paths to shapenet models
@@ -81,48 +80,7 @@ def fetch_batch(models, indices, batch_num, batch_size):
 
 	return np.array(batch_ip), np.array(batch_gt)
 
-def buildgraph(img_inp):
-	'''
-	Input:
-		img_inp: tf placeholder of shape (B, HEIGHT, WIDTH, 3) corresponding to RGB image
-	Returns:
-		x_latent: tensor of shape (B, FLAGS.bottleneck) corresponding to the predicted latent vector
-	Description:
-		Main Architecture for Latent Matching Network
-	'''
-	x=img_inp
-	#128 128
-	x=tflearn.layers.conv.conv_2d(x,32,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,32,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x1=x
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#64 64
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x2=x
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#32 32
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x3=x
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#16 16
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x4=x
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#8 8
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x5=x
-
-	x=tflearn.layers.conv.conv_2d(x,512,(5,5),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x_latent=tflearn.layers.core.fully_connected(x,FLAGS.bottleneck,activation='linear',weight_decay=1e-3,regularizer='L2')
-	return x_latent
-
 def get_epoch_loss(val_models, val_pair_indices):
-
 	'''
 	Input:
 		val_models:	list of absolute paths to models in validation set
@@ -157,10 +115,10 @@ def get_epoch_loss(val_models, val_pair_indices):
 if __name__ == '__main__':
 
 	# Create a folder for experiments and copy the training file
-	create_folder(join(BASE_DIR, FLAGS.exp))
+	create_folder(FLAGS.exp)
 	train_filename = basename(__file__)
-	os.system('cp %s %s'%(train_filename, join(BASE_DIR, FLAGS.exp)))
-	with open(join(BASE_DIR, FLAGS.exp, 'settings.txt'), 'w') as f:
+	os.system('cp %s %s'%(train_filename, FLAGS.exp))
+	with open(join(FLAGS.exp, 'settings.txt'), 'w') as f:
 		f.write(str(FLAGS)+'\n')
 
 	# Create Placeholders
@@ -169,7 +127,7 @@ if __name__ == '__main__':
 
 	# Generate Prediction
 	with tf.variable_scope('psgn_vars'):
-		z_latent_img = buildgraph(img_inp)
+		z_latent_img = image_encoder(img_inp, FLAGS)
 
 	bneck_size = FLAGS.bottleneck
 	with tf.variable_scope('pointnet_ae') as scope:
@@ -203,12 +161,11 @@ if __name__ == '__main__':
 		reconstr_img = tf.reshape(out_img, (BATCH_SIZE, NUM_POINTS, 3))
 
 	# Calculate Chamfer Metrics reconstr_img <-> pcl_gt
-	dists_forward_rimg, dists_backward_rimg, chamfer_distance_rimg = get_chamfer_metrics(pcl_gt, reconstr_img)
+	dists_forward_rimg, dists_backward_rimg, chamfer_distance_rimg = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt, reconstr_img)]
 
 	# Calculate Chamfer Metrics reconstr_img_scaled <-> pcl_gt_scaled
-	pcl_gt_scaled = scale(pcl_gt)
-	reconstr_img_scaled = scale(reconstr_img)
-	dists_forward_rimg_scaled, dists_backward_rimg_scaled, chamfer_distance_rimg_scaled = get_chamfer_metrics(pcl_gt_scaled, reconstr_img_scaled)
+	pcl_gt_scaled, reconstr_img_scaled = scale(pcl_gt, reconstr_img)
+	dists_forward_rimg_scaled, dists_backward_rimg_scaled, chamfer_distance_rimg_scaled = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_scaled, reconstr_img_scaled)]
 
 	# L1 Distance between latent representations
 	L1 = tf.reduce_mean(tf.abs(z_latent_pcl - z_latent_img))
@@ -239,9 +196,9 @@ if __name__ == '__main__':
 	max_epoch = FLAGS.max_epoch
 
 	# Define Log Directories
-	snapshot_folder = join(BASE_DIR, FLAGS.exp, 'snapshots')
-	best_folder = join(BASE_DIR, FLAGS.exp, 'best')
-	logs_folder = join(BASE_DIR, FLAGS.exp, 'logs')
+	snapshot_folder = join(FLAGS.exp, 'snapshots')
+	best_folder = join(FLAGS.exp, 'best')
+	logs_folder = join(FLAGS.exp, 'logs')
 	pointnet_ae_logs_path = FLAGS.ae_logs
 
 	# Define Savers

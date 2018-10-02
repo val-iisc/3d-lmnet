@@ -187,10 +187,10 @@ def get_epoch_loss(val_models, val_pair_indices):
 if __name__ == '__main__':
 
 	# Create a folder for experiments and copy the training file
-	create_folder(join(BASE_DIR, FLAGS.exp))
+	create_folder(FLAGS.exp)
 	train_filename = basename(__file__)
-	os.system('cp %s %s'%(train_filename, join(BASE_DIR, FLAGS.exp)))
-	with open(join(BASE_DIR, FLAGS.exp, 'settings.txt'), 'w') as f:
+	os.system('cp %s %s'%(train_filename, FLAGS.exp))
+	with open(join(FLAGS.exp, 'settings.txt'), 'w') as f:
 		f.write(str(FLAGS)+'\n')
 
 	# Create Placeholders
@@ -238,12 +238,11 @@ if __name__ == '__main__':
 		reconstr_img = tf.reshape(out_img, (BATCH_SIZE, NUM_POINTS, 3))
 
 	# Calculate Chamfer Metrics reconstr_img <-> pcl_gt
-	dists_forward_rimg, dists_backward_rimg, chamfer_distance_rimg = get_chamfer_metrics(pcl_gt, reconstr_img)
+	dists_forward_rimg, dists_backward_rimg, chamfer_distance_rimg = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt, reconstr_img)]
 
 	# Calculate Chamfer Metrics reconstr_img_scaled <-> pcl_gt_scaled
-	pcl_gt_scaled = scale(pcl_gt)
-	reconstr_img_scaled = scale(reconstr_img)
-	dists_forward_rimg_scaled, dists_backward_rimg_scaled, chamfer_distance_rimg_scaled = get_chamfer_metrics(pcl_gt_scaled, reconstr_img_scaled)
+	pcl_gt_scaled, reconstr_img_scaled = scale(pcl_gt, reconstr_img)
+	dists_forward_rimg_scaled, dists_backward_rimg_scaled, chamfer_distance_rimg_scaled = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_scaled, reconstr_img_scaled)]
 
 	# L1 Distance between latent representations
 	L1 = tf.reduce_mean(tf.abs(z_latent_pcl - z_latent_img))
@@ -280,9 +279,9 @@ if __name__ == '__main__':
 	max_epoch = FLAGS.max_epoch
 
 	# Define Log Directories
-	snapshot_folder = join(BASE_DIR, FLAGS.exp, 'snapshots')
-	best_folder = join(BASE_DIR, FLAGS.exp, 'best')
-	logs_folder = join(BASE_DIR, FLAGS.exp, 'logs')
+	snapshot_folder = join(FLAGS.exp, 'snapshots')
+	best_folder = join(FLAGS.exp, 'best')
+	logs_folder = join(FLAGS.exp, 'logs')
 	pointnet_ae_logs_path = FLAGS.ae_logs
 
 	# Define Savers

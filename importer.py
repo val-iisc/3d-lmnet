@@ -15,8 +15,6 @@ import numpy as np
 import tensorflow as tf
 import tflearn
 
-BASE_DIR = dirname(abspath(__file__))
-
 from utils.data_loader import *
 from utils.checkpoint_loader import *
 from utils.metrics_utils import *

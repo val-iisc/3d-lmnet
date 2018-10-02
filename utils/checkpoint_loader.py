@@ -12,7 +12,7 @@ def load_previous_checkpoint(snapshot_folder, saver, sess):
 	ckpt = tf.train.get_checkpoint_state(snapshot_folder)
 	if ckpt is not None:
 		ckpt_path = ckpt.model_checkpoint_path
-		ckpt_path = '/'.join(ckpt_path.split('/')[-3:])
+		ckpt_path = join(snapshot_folder, ckpt_path.split('/')[-1])
 		print ('loading '+ckpt_path + '  ....')
 		saver.restore(sess, ckpt_path)
 		start_epoch = 1 + int(re.match('.*-(\d*)$', ckpt_path).group(1))

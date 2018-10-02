@@ -100,11 +100,10 @@ def get_epoch_loss(val_models):
 if __name__ == '__main__':
 
 	# Create a folder for experiments and copy the training file
-	print join(BASE_DIR, FLAGS.exp)
-	create_folder(join(BASE_DIR, FLAGS.exp))
+	create_folder(FLAGS.exp)
 	train_filename = basename(__file__)
-	os.system('cp %s %s'%(train_filename, join(BASE_DIR, FLAGS.exp)))
-	with open(join(BASE_DIR, FLAGS.exp, 'settings.txt'), 'w') as f:
+	os.system('cp %s %s'%(train_filename, FLAGS.exp))
+	with open(join(FLAGS.exp, 'settings.txt'), 'w') as f:
 		f.write(str(FLAGS)+'\n')
 
 	# Create Placeholders
@@ -130,14 +129,13 @@ if __name__ == '__main__':
 		out = tf.reshape(out, (BATCH_SIZE, NUM_POINTS, 3))
 
 	# Scale output and gt for val losses
-	pcl_gt_scaled = scale(pcl_gt)
-	out_scaled = scale(out)
+	pcl_gt_scaled, out_scaled = scale(pcl_gt, out)
 	
 	# Calculate Chamfer Metrics
-	dists_forward, dists_backward, chamfer_distance = get_chamfer_metrics(pcl_gt_16K, out)
+	dists_forward, dists_backward, chamfer_distance = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_16K, out)]
 
 	# Calculate Chamfer Metrics on scaled prediction and GT
-	dists_forward_scaled, dists_backward_scaled, chamfer_distance_scaled = get_chamfer_metrics(pcl_gt_scaled, out_scaled)
+	dists_forward_scaled, dists_backward_scaled, chamfer_distance_scaled = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_scaled, out_scaled)]
 
 	# Define Loss to optimize on
 	loss = (dists_forward + dists_backward/2.0)*10000
@@ -154,9 +152,9 @@ if __name__ == '__main__':
 	max_epoch = FLAGS.max_epoch
 
 	# Define Log Directories
-	snapshot_folder = join(BASE_DIR, FLAGS.exp, 'snapshots')
-	best_folder = join(BASE_DIR, FLAGS.exp, 'best')
-	logs_folder = join(BASE_DIR, FLAGS.exp, 'logs')	
+	snapshot_folder = join(FLAGS.exp, 'snapshots')
+	best_folder = join(FLAGS.exp, 'best')
+	logs_folder = join(FLAGS.exp, 'logs')	
 
 	# Define Savers
 	saver = tf.train.Saver(max_to_keep=2)
