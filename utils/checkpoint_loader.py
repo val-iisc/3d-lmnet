@@ -4,7 +4,7 @@ import sys
 import tensorflow as tf
 from os.path import join
 
-def load_previous_checkpoint(snapshot_folder, saver, sess):
+def load_previous_checkpoint(snapshot_folder, saver, sess, is_training=True):
 	'''
 	Load previous latent matching snapshot
 	'''
@@ -15,8 +15,16 @@ def load_previous_checkpoint(snapshot_folder, saver, sess):
 		ckpt_path = join(snapshot_folder, ckpt_path.split('/')[-1])
 		print ('loading '+ckpt_path + '  ....')
 		saver.restore(sess, ckpt_path)
-		start_epoch = 1 + int(re.match('.*-(\d*)$', ckpt_path).group(1))
-	return start_epoch
+		if is_training:
+			start_epoch = 1 + int(re.match('.*-(\d*)$', ckpt_path).group(1))
+			return start_epoch
+	else:
+		if is_training:
+			return start_epoch
+		else:
+			print 'Snapshot not found! Please check the path:'
+			print snapshot_folder
+			sys.exit(1)
 
 def load_pointnet_ae(pointnet_ae_logs_path, pointnet_ae_vars, sess, FLAGS):
 	'''

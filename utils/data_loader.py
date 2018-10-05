@@ -8,7 +8,6 @@ from os.path import join, exists, isdir, dirname, abspath, basename
 
 from utils.shapenet_taxonomy import shapenet_id_to_category, shapenet_category_to_id
 
-data_dir = '/data/shapenet'
 NUM_VIEWS = 24
 PNG_FILES = [(str(i).zfill(2)+'.png') for i in xrange(NUM_VIEWS)]
 
@@ -34,10 +33,10 @@ def get_shapenet_models(FLAGS):
 		-->	ind[1] : view index (range--> [0, NUM_VIEWS-1])
 	'''
 
-	with open(join('data/', 'train_models.json'), 'r') as f:
+	with open(join('data/splits/', 'train_models.json'), 'r') as f:
 		train_models_dict = json.load(f)
 
-	with open(join('data/', 'val_models.json'), 'r') as f:
+	with open(join('data/splits/', 'val_models.json'), 'r') as f:
 		val_models_dict = json.load(f)
 
 	train_models = []
@@ -50,10 +49,10 @@ def get_shapenet_models(FLAGS):
 		cats = [shapenet_category_to_id[category]]
 	
 	for cat in cats:
-		train_models.extend([join(data_dir, model) for model in train_models_dict[cat]])
+		train_models.extend([join(FLAGS.data_dir, model) for model in train_models_dict[cat]])
 
 	for cat in cats:
-		val_models.extend([join(data_dir, model) for model in val_models_dict[cat]])
+		val_models.extend([join(FLAGS.data_dir, model) for model in val_models_dict[cat]])
 
 	train_pair_indices = list(product(xrange(len(train_models)), xrange(NUM_VIEWS)))
 	val_pair_indices = list(product(xrange(len(val_models)), xrange(NUM_VIEWS)))

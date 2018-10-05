@@ -2,6 +2,10 @@ from importer import *
 
 parser = argparse.ArgumentParser()
 
+parser.add_argument('--data_dir', type=str, required=True, 
+	help='Path to shapenet dataset')
+parser.add_argument('--mode', type=str, required=True, 
+	help='Latent Matching setup. Choose from [lm, plm]')
 parser.add_argument('--exp', type=str, required=True, 
 	help='Name of Experiment')
 parser.add_argument('--gpu', type=str, required=True, 

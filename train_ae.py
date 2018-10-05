@@ -1,6 +1,9 @@
 from importer import *
 
 parser = argparse.ArgumentParser()
+
+parser.add_argument('--data_dir', type=str, required=True, 
+	help='Path to shapenet dataset')
 parser.add_argument('--exp', type=str, required=True, 
 	help='Name of Experiment')
 parser.add_argument('--gpu', type=str, required=True, 

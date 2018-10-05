@@ -5,10 +5,13 @@ from tqdm import tqdm
 parser = argparse.ArgumentParser()
 
 # Machine Details
-parser.add_argument('--ip' , type=str, required=True, help='[Required] Ip of system to use')
 parser.add_argument('--gpu', type=str, required=True, help='[Required] GPU to use')
 
+# Dataset
+parser.add_argument('--data_dir', type=str, required=True, help='Path to dataset')
+
 # Experiment Details
+parser.add_argument('--mode', type=str, required=True, help='[Required] Latent Matching setup. Choose from [lm, plm]')
 parser.add_argument('--exp', type=str, required=True, help='[Required] Path of experiment for loading pre-trained model')
 parser.add_argument('--category', type=str, required=True, help='[Required] Model Category for training')
 parser.add_argument('--load_best', action='store_true', help='load best val model')
@@ -83,7 +86,10 @@ def fetch_batch(models, indices, batch_num, batch_size):
 def calculate_metrics(models, indices, pcl_gt_1K_scaled, pred_scaled):
 
 	batches = len(indices)/BATCH_SIZE
-	iters = tqdm(range(batches))
+	if FLAGS.visualize:
+		iters = range(batches)
+	else:
+		iters = tqdm(range(batches))
 
 	epoch_chamfer = 0.
 	epoch_forward = 0.
@@ -152,8 +158,15 @@ if __name__ == '__main__':
 	pcl_gt_1K = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_EVAL_POINTS, 3), name='pcl_gt_1K')
 
 	# Generate Prediction
-	with tf.variable_scope('psgn_vars'):
-		z_latent_img = image_encoder(img_inp, FLAGS)
+	if FLAGS.mode == 'lm':
+		with tf.variable_scope('psgn_vars'):
+			z_latent_img = image_encoder(img_inp, FLAGS)
+	elif FLAGS.mode == 'plm':
+		with tf.variable_scope('psgn_vars'):
+			z_mean, z_log_sigma_sq = image_encoder(img_inp, FLAGS)
+			z_sigma = tf.sqrt(tf.exp(z_log_sigma_sq))
+			eps = tf.random_normal(tf.shape(z_mean), 0, 1, dtype=tf.float32)
+			z_latent_img = z_mean + z_sigma * eps
 	with tf.variable_scope('pointnet_ae') as scope:
 		out_img = decoder_with_fc_only(z_latent_img, layer_sizes=[256,256,np.prod([NUM_POINTS, 3])],
 			b_norm=FLAGS.bn_decoder,
@@ -167,8 +180,10 @@ if __name__ == '__main__':
 	pcl_gt_1K_scaled, reconstr_img_scaled = scale(pcl_gt_1K, reconstr_img)
 
 	# Snapshot Folder Location
-	snapshot_folder = join(FLAGS.exp, 'snapshots')
-	best_folder = join(FLAGS.exp, 'best')
+	if FLAGS.load_best:
+		snapshot_folder = join(FLAGS.exp, 'best')
+	else:
+		snapshot_folder = join(FLAGS.exp, 'snapshots')
 
  	# Metrics path
  	metrics_folder = join(FLAGS.exp, 'metrics', FLAGS.eval_set)
@@ -187,7 +202,7 @@ if __name__ == '__main__':
 		saver = tf.train.Saver()
 
 		# Load previous checkpoint
-		load_previous_checkpoint(snapshot_folder, saver, sess)
+		load_previous_checkpoint(snapshot_folder, saver, sess, is_training=False)
 
 		tflearn.is_training(False, session=sess)
 
