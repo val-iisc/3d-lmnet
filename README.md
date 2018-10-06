@@ -33,7 +33,7 @@ Install [TensorFlow](https://www.tensorflow.org/install/). We recommend version 
 git clone https://github.com/val-iisc/3d-lmnet.git
 cd 3d-lmnet
 ```
-2. Tensorflow ops for losses (Chamfer and EMD) as well as for point cloud visualization need to be compiled. Run the makefile as given below. (*Note that the the nvcc, cudalib, and tensorflow paths need to be updated to point to the locations on your machine*):
+2. Tensorflow ops for losses (Chamfer and EMD) as well as for point cloud visualization need to be compiled. Run the makefile as given below. (Note that the the nvcc, cudalib, and tensorflow paths inside the makefile need to be updated to point to the locations on your machine):
 ```shell
 make
 ```
@@ -56,6 +56,10 @@ bash scripts/train_plm.py --data_dir <dataset_path>
 ```
 
 ## Trained Models
+Create a folder called 'trained_models' inside the project folder:
+```
+mkdir trained_models
+```
 - Download the trained model for latent matching (lm) here:<br>
 [https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf](https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf) <br>
 Extract it and move it into *trained_models/*
