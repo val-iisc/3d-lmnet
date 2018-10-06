@@ -39,19 +39,20 @@ make
 ```
 
 ## Training
-To train the point-cloud auto-encoder, run
+- To train the point-cloud auto-encoder, run:
 ```shell
-bash scripts/run_ae.py --data_dir <dataset_path>
+bash scripts/train_ae.py --data_dir <dataset_path>
+```
+Note that the auto-encoder needs to be trained before training either of the latent matching setups.
+
+- To train the latent matching (lm) setup, run:
+```shell
+bash scripts/train_lm.py --data_dir <dataset_path>
 ```
 
-To train the latent matching (lm) setup, run
+- To train the probabilistic latent matching (plm) setup, run:
 ```shell
-bash scripts/run_lm.py --data_dir <dataset_path>
-```
-
-To train the probabilistic latent matching (plm) setup, run
-```shell
-bash scripts/run_plm.py --data_dir <dataset_path>
+bash scripts/train_plm.py --data_dir <dataset_path>
 ```
 
 ## Trained Models
