@@ -43,37 +43,37 @@ To train the point-cloud auto-encoder, run
 bash scripts/run_ae.py --data_dir <dataset_path>
 ```
 
-To train the latent matching setip, run
+To train the latent matching (lm) setup, run
 ```shell
 bash scripts/run_lm.py --data_dir <dataset_path>
 ```
 
-To train the probabilistic latent matching setup, run
+To train the probabilistic latent matching (plm) setup, run
 ```shell
 bash scripts/run_plm.py --data_dir <dataset_path>
 ```
 
 ## Trained Models
-- Download the trained model for latent matching here:<br>
+- Download the trained model for latent matching (lm) here:<br>
 [https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf](https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf) <br>
 Extract it and move it into trained_models/
 
-- Download the trained model for probabilistic latent matching here:<br>
+- Download the trained model for probabilistic latent matching (plm) here:<br>
 [https://drive.google.com/open?id=1iYUOPTrhwAIwubihrBhLGG-KVD4Qr7is](https://drive.google.com/open?id=1iYUOPTrhwAIwubihrBhLGG-KVD4Qr7is) <br>
 Extract it and move it into trained_models/
 
 ## Evaluation
 We provide the validation dataset (inputy images + ground truth point clouds) in the below link:<br>
-[https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk](https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk)
+[https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk](https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk)<br>
 Extract it and move it into data/
 
-For computing the Chamfer and EMD metrics reported in the paper (all 13 categories), run:
+- For computing the Chamfer and EMD metrics reported in the paper (all 13 categories), run:
 ```shell
 bash scripts/metrics_lm.sh
 ```
 The computed metrics will be saved inside trained_models/lm/metrics/
 
-For the plm setup (chair category), run:
+- For the plm setup (chair category), run:
 ```shell
 bash scripts/metrics_plm.sh
 ```
@@ -81,12 +81,13 @@ The computed metrics will be saved inside trained_models/plm/metrics/
 
 ## Demo
 Follow the steps given above to download and extract the validation data.
-Run the following to visualize the results:
+
+- Run the following to visualize the results:
 ```shell
 bash scripts/metrics_lm.sh --visualize
 ```
 
-For plm:
+- For plm:
 ```shell
 bash scripts/metrics_plm.sh --visualize
 ```
