@@ -23,19 +23,20 @@ We use the rendered images from the dataset provided by <a href="https://github.
 Rendered Images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
 ShapeNet meshes: https://www.shapenet.org/
 
-However, we do provide the validation data for evaluation purposes. Kindly refer to the 'Evaluation' Section.
+However, we do provide the validation data for evaluation purposes. Kindly refer to the 'Evaluation' section.
 
 ## Usage
-Install [TensorFlow](https://www.tensorflow.org/install/). The code has been tested with Python 2.7, TensorFlow 1.3, and CUDA 8.0. 
+Install [TensorFlow](https://www.tensorflow.org/install/). We recommend version 1.3 so that the additional TensorFlow ops can be compiled (see 'Usage'). The code provided has been tested with Python 2.7, TensorFlow 1.3, and CUDA 8.0. The following steps need to be performed to run the codes given in this repository:
 
 1. Clone the repository:
 ```shell
 git clone https://github.com/val-iisc/3d-lmnet.git
 cd 3d-lmnet
 ```
-2. 
-
-For computing the Chamfer and EMD metrics, the following codes will have to be compiled.
+2. Tensorflow ops for losses (Chamfer and EMD) as well as for point cloud visualization need to be compiled. Run the makefile as given below. (*Note that the the nvcc, cudalib, and tensorflow paths need to be updated to point to the locations on your machine*):
+```shell
+make
+```
 
 ## Training
 To train the point-cloud auto-encoder, run
@@ -56,28 +57,28 @@ bash scripts/run_plm.py --data_dir <dataset_path>
 ## Trained Models
 - Download the trained model for latent matching (lm) here:<br>
 [https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf](https://drive.google.com/open?id=1nl30z1CJL5WZn8svFllHkVLvS4GWiAxf) <br>
-Extract it and move it into trained_models/
+Extract it and move it into *trained_models/*
 
 - Download the trained model for probabilistic latent matching (plm) here:<br>
 [https://drive.google.com/open?id=1iYUOPTrhwAIwubihrBhLGG-KVD4Qr7is](https://drive.google.com/open?id=1iYUOPTrhwAIwubihrBhLGG-KVD4Qr7is) <br>
-Extract it and move it into trained_models/
+Extract it and move it into *trained_models/*
 
 ## Evaluation
-We provide the validation dataset (inputy images + ground truth point clouds) in the below link:<br>
+We provide the validation dataset (input images + ground truth point clouds) in the below link:<br>
 [https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk](https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk)<br>
-Extract it and move it into data/
+Extract it and move it into *data/*
 
 - For computing the Chamfer and EMD metrics reported in the paper (all 13 categories), run:
 ```shell
 bash scripts/metrics_lm.sh
 ```
-The computed metrics will be saved inside trained_models/lm/metrics/
+The computed metrics will be saved inside *trained_models/lm/metrics/*
 
 - For the plm setup (chair category), run:
 ```shell
 bash scripts/metrics_plm.sh
 ```
-The computed metrics will be saved inside trained_models/plm/metrics/
+The computed metrics will be saved inside *trained_models/plm/metrics/*
 
 ## Demo
 Follow the steps given above to download and extract the validation data.
