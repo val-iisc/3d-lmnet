@@ -28,7 +28,7 @@ parser.add_argument('--bn_decoder', action='store_true',
 	help='Supply this parameter if you want bn_decoder, otherwise ignore')
 parser.add_argument('--load_best_ae', action='store_true', 
 	help='supply this parameter to load best model from the auto-encoder')
-parser.add_argument('--max_epoch', type=int, default=50, 
+parser.add_argument('--max_epoch', type=int, default=30, 
 	help='max num of epoch')
 parser.add_argument('--print_n', type=int, default=100, 
 	help='print_n')
