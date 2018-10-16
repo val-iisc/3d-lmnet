@@ -20,8 +20,8 @@ If you find this work useful in your research, please consider citing:
 
 ## Dataset
 We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories. For generating the ground truth point clouds, we sample points on the corresponding object meshed from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
-Rendered Images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
-ShapeNet pointclouds: [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
+Rendered Images (~12.3 GB): http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
+ShapeNet pointclouds (~2.8 GB): [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
 
 Donwload each of the folders, extract them and move them into *data/*.<br>
 The folder structure should now look something like the following:<br>
