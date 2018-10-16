@@ -19,14 +19,18 @@ If you find this work useful in your research, please consider citing:
 ![Overview of 3D-LMNet](images/approach_overview.png)
 
 ## Dataset
-We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories. For generating the ground truth point clouds, we sample points on the corresponding object meshed from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Due to memory contraints, we do not provide the entire training dataset. The same can be downloaded from the following links:<br>
+We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories. For generating the ground truth point clouds, we sample points on the corresponding object meshed from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
 Rendered Images: http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
-ShapeNet meshes: https://www.shapenet.org/
+ShapeNet pointclouds: [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
 
-However, we do provide the validation data for evaluation purposes. Kindly refer to the 'Evaluation' section.
+Donwload each of the folders, extract them and move them into *data/*.<br>
+The folder structure should now look something like the following:<br>
+--data/<br>
+&nbsp;&nbsp;--ShapeNetRendering/<br>
+&nbsp;&nbsp;--ShapeNet_pointclouds/<br>
 
 ## Usage
-Install [TensorFlow](https://www.tensorflow.org/install/). We recommend version 1.3 so that the additional TensorFlow ops can be compiled (see 'Usage'). The code provided has been tested with Python 2.7, TensorFlow 1.3, and CUDA 8.0. The following steps need to be performed to run the codes given in this repository:
+Install [TensorFlow](https://www.tensorflow.org/install/). We recommend version 1.3 so that the additional TensorFlow ops can be compiled. The code provided has been tested with Python 2.7, TensorFlow 1.3, and CUDA 8.0. The following steps need to be performed to run the codes given in this repository:
 
 1. Clone the repository:
 ```shell
@@ -41,18 +45,18 @@ make
 ## Training
 - To train the point-cloud auto-encoder, run:
 ```shell
-bash scripts/train_ae.py --data_dir <dataset_path>
+bash scripts/train_ae.py
 ```
 Note that the auto-encoder needs to be trained before training either of the latent matching setups.
 
 - To train the latent matching (lm) setup, run:
 ```shell
-bash scripts/train_lm.py --data_dir <dataset_path>
+bash scripts/train_lm.py
 ```
 
 - To train the probabilistic latent matching (plm) setup, run:
 ```shell
-bash scripts/train_plm.py --data_dir <dataset_path>
+bash scripts/train_plm.py
 ```
 
 ## Trained Models
@@ -69,9 +73,7 @@ Extract it and move it into *trained_models/*
 Extract it and move it into *trained_models/*
 
 ## Evaluation
-We provide the validation dataset (input images + ground truth point clouds) in the below link:<br>
-[https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk](https://drive.google.com/open?id=10r86aGDkBw0KspV7xB6X51-TGoTZmZmk)<br>
-Extract it and move it into *data/*
+Follow the steps detailed above to download the dataset and pre-trained models.
 
 - For computing the Chamfer and EMD metrics reported in the paper (all 13 categories), run:
 ```shell
