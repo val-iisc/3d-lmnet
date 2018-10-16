@@ -1,4 +1,7 @@
 python train_plm.py \
+	--mode lm \
+	--data_dir_imgs data/ShapeNetRendering \
+	--data_dir_pcl data/ShapeNet_pointclouds \
 	--exp expts/plm_chairs \
 	--gpu 1 \
 	--ae_logs expts/ae_all_cat \

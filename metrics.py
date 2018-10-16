@@ -8,7 +8,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--gpu', type=str, required=True, help='[Required] GPU to use')
 
 # Dataset
-parser.add_argument('--data_dir', type=str, required=True, help='Path to dataset')
+parser.add_argument('--data_dir_imgs', type=str, required=True, help='Path to shapenet rendered images')
+parser.add_argument('--data_dir_pcl', type=str, required=True, help='Path to shapenet pointclouds')
 
 # Experiment Details
 parser.add_argument('--mode', type=str, required=True, help='[Required] Latent Matching setup. Choose from [lm, plm]')
@@ -70,8 +71,8 @@ def fetch_batch(models, indices, batch_num, batch_size):
 
 	for ind in indices[batch_num*batch_size:batch_num*batch_size+batch_size]:
 		model_path = models[ind[0]]
-		img_path = join(model_path, 'rendering', PNG_FILES[ind[1]])
-		pcl_path = join(model_path, 'pointcloud_trimesh_fps_1024.npy')
+		img_path = join(FLAGS.data_dir_imgs, model_path, 'rendering', PNG_FILES[ind[1]])
+		pcl_path = join(FLAGS.data_dir_pcl, model_path, 'pointcloud_1024.npy')
 
 		pcl_gt = np.load(pcl_path)
 

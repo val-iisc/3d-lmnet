@@ -41,7 +41,7 @@ def load_pointnet_ae(pointnet_ae_logs_path, pointnet_ae_vars, sess, FLAGS):
 			snapshot_folder = join(pointnet_ae_logs_path,'snapshots')
 			ckpt = tf.train.get_checkpoint_state(snapshot_folder)
 			ckpt_path = ckpt.model_checkpoint_path
-			ckpt_path = join('..', '/'.join(ckpt_path.split('/')[-4:]))
+			ckpt_path = join(snapshot_folder, ckpt_path.split('/')[-1])
 			print ('loading '+ckpt_path + '  ....')
 			saver_pointnet_ae.restore(sess, ckpt_path)
 	except Exception as e:

@@ -49,10 +49,10 @@ def get_shapenet_models(FLAGS):
 		cats = [shapenet_category_to_id[category]]
 	
 	for cat in cats:
-		train_models.extend([join(FLAGS.data_dir, model) for model in train_models_dict[cat]])
+		train_models.extend([model for model in train_models_dict[cat]])
 
 	for cat in cats:
-		val_models.extend([join(FLAGS.data_dir, model) for model in val_models_dict[cat]])
+		val_models.extend([model for model in val_models_dict[cat]])
 
 	train_pair_indices = list(product(xrange(len(train_models)), xrange(NUM_VIEWS)))
 	val_pair_indices = list(product(xrange(len(val_models)), xrange(NUM_VIEWS)))

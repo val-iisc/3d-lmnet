@@ -2,8 +2,10 @@ from importer import *
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--data_dir', type=str, required=True, 
-	help='Path to shapenet dataset')
+parser.add_argument('--data_dir_imgs', type=str, required=True, 
+	help='Path to shapenet rendered images')
+parser.add_argument('--data_dir_pcl', type=str, required=True, 
+	help='Path to shapenet pointclouds')
 parser.add_argument('--mode', type=str, required=True, 
 	help='Latent Matching setup. Choose from [lm, plm]')
 parser.add_argument('--exp', type=str, required=True, 
@@ -89,8 +91,8 @@ def fetch_batch(models, indices, batch_num, batch_size):
 
 	for ind in indices[batch_num*batch_size:batch_num*batch_size+batch_size]:
 		model_path = models[ind[0]]
-		img_path = join(model_path, 'rendering', PNG_FILES[ind[1]])
-		pcl_path = join(model_path, 'pointcloud_trimesh_fps_2K.npy')
+		img_path = join(FLAGS.data_dir_imgs, model_path, 'rendering', PNG_FILES[ind[1]])
+		pcl_path = join(FLAGS.data_dir_pcl, model_path, 'pointcloud_2048.npy')
 		metadata_path = join(model_path, 'rendering', 'rendering_metadata.txt')
 
 		pcl_gt = np.load(pcl_path)
@@ -111,50 +113,6 @@ def fetch_batch(models, indices, batch_num, batch_size):
 	batch_az = np.array(batch_az).astype('float32')
 
 	return np.array(batch_ip), np.array(batch_gt), batch_az
-
-def buildgraph(img_inp):
-	'''
-	Input:
-		img_inp: tf placeholder of shape (B, HEIGHT, WIDTH, 3) corresponding to RGB image
-	Returns:
-		z_mean(mu): tensor of shape (B, FLAGS.bottleneck)
-		z_log_sigma_sq: tensor of shape (B, FLAGS.bottleneck)
-	Description:
-		Main Architecture for Variational Latent Matching Network
-	'''
-	x=img_inp
-	#128 128
-	x=tflearn.layers.conv.conv_2d(x,32,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,32,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x1=x
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#64 64
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,64,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x2=x
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#32 32
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,128,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x3=x
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#16 16
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,256,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x4=x
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-	#8 8
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x=tflearn.layers.conv.conv_2d(x,512,(3,3),strides=1,activation='relu',weight_decay=1e-5,regularizer='L2')
-	x5=x
-
-	x=tflearn.layers.conv.conv_2d(x,512,(5,5),strides=2,activation='relu',weight_decay=1e-5,regularizer='L2')
-
-	z_mean = tflearn.layers.core.fully_connected(x, FLAGS.bottleneck, activation='linear', weight_decay=1e-3,regularizer='L2')
-	z_log_sigma_sq = tflearn.layers.core.fully_connected(x, FLAGS.bottleneck, activation='linear', weight_decay=1e-3,regularizer='L2')
-
-	return z_mean, z_log_sigma_sq
 
 def get_epoch_loss(val_models, val_pair_indices):
 
@@ -204,7 +162,7 @@ if __name__ == '__main__':
 
 	# Generate Prediction
 	with tf.variable_scope('psgn_vars'):
-		z_mean, z_log_sigma_sq = buildgraph(img_inp)
+		z_mean, z_log_sigma_sq = image_encoder(img_inp, FLAGS)
 		z_sigma = tf.sqrt(tf.exp(z_log_sigma_sq))
 		eps = tf.random_normal(tf.shape(z_mean), 0, 1, dtype=tf.float32)
 		z_latent_img = z_mean + z_sigma * eps

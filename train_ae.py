@@ -2,8 +2,8 @@ from importer import *
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument('--data_dir', type=str, required=True, 
-	help='Path to shapenet dataset')
+parser.add_argument('--data_dir_pcl', type=str, required=True, 
+	help='Path to shapenet pointclouds')
 parser.add_argument('--exp', type=str, required=True, 
 	help='Name of Experiment')
 parser.add_argument('--gpu', type=str, required=True, 
@@ -46,28 +46,18 @@ def fetch_batch(models, batch_num, batch_size):
 		batch_size:	batch size for training or validation
 	Returns:
 		batch_gt: (B,2048,3)
-		batch_gt_16K: (B,16384,3)
 	Description:
 		Batch Loader
 	'''
 
 	batch_gt = []
-	batch_gt_16K = []
-
 	for ind in range(batch_num*batch_size, batch_num*batch_size+batch_size):
 		model_path = models[ind]
-		pcl_path = join(model_path, 'pointcloud_trimesh_fps_2K.npy') # Path to 2K ground truth point cloud
-		pcl_path_16K = join(model_path, 'pointcloud_trimesh.npy') # Path to 16K ground truth point cloud
+		pcl_path = join(FLAGS.data_dir_pcl, model_path, 'pointcloud_2048.npy') # Path to 2K ground truth point cloud
 		pcl_gt = np.load(pcl_path)
-		pcl_gt_16K = np.load(pcl_path_16K)
-
 		batch_gt.append(pcl_gt)
-		batch_gt_16K.append(pcl_gt_16K)
-
 	batch_gt = np.array(batch_gt)
-	batch_gt_16K = np.array(batch_gt_16K)
-
-	return batch_gt, batch_gt_16K
+	return batch_gt
 
 def get_epoch_loss(val_models):
 
@@ -89,9 +79,9 @@ def get_epoch_loss(val_models):
 	val_stats = reset_stats(ph_summary, val_stats)
 
 	for b in xrange(batches):
-		batch_gt, batch_gt_16K = fetch_batch(val_models, b, BATCH_SIZE)
+		batch_gt = fetch_batch(val_models, b, BATCH_SIZE)
 		runlist = [loss, chamfer_distance_scaled, dists_forward_scaled, dists_backward_scaled]
-		L,C,F,B = sess.run(runlist, feed_dict={pcl_gt:batch_gt, pcl_gt_16K:batch_gt_16K})
+		L,C,F,B = sess.run(runlist, feed_dict={pcl_gt:batch_gt})
 		_summary_losses = [L, C, F, B]
 
 		val_stats = update_stats(ph_summary, _summary_losses, val_stats, batches)
@@ -111,7 +101,6 @@ if __name__ == '__main__':
 
 	# Create Placeholders
 	pcl_gt = tf.placeholder(tf.float32, shape=(BATCH_SIZE, NUM_POINTS, 3))
-	pcl_gt_16K = tf.placeholder(tf.float32, shape=(BATCH_SIZE, GT_PCL_SIZE, 3))
 
 	# Generate Prediction
 	bneck_size = FLAGS.bottleneck
@@ -135,7 +124,7 @@ if __name__ == '__main__':
 	pcl_gt_scaled, out_scaled = scale(pcl_gt, out)
 	
 	# Calculate Chamfer Metrics
-	dists_forward, dists_backward, chamfer_distance = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_16K, out)]
+	dists_forward, dists_backward, chamfer_distance = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt, out)]
 
 	# Calculate Chamfer Metrics on scaled prediction and GT
 	dists_forward_scaled, dists_backward_scaled, chamfer_distance_scaled = [tf.reduce_mean(metric) for metric in get_chamfer_metrics(pcl_gt_scaled, out_scaled)]
@@ -205,10 +194,10 @@ if __name__ == '__main__':
 
 			for b in xrange(batches):
 				global_step = i*batches + b + 1
-				batch_gt, batch_gt_16K = fetch_batch(train_models, b, BATCH_SIZE)
+				batch_gt = fetch_batch(train_models, b, BATCH_SIZE)
 
 				runlist = [loss, chamfer_distance, dists_forward, dists_backward, optim]
-				L, C, F, B, _ = sess.run(runlist, feed_dict={pcl_gt:batch_gt, pcl_gt_16K:batch_gt_16K})
+				L, C, F, B, _ = sess.run(runlist, feed_dict={pcl_gt:batch_gt})
 				_summary_losses = [L, C, F, B]
 
 				stats = update_stats(ph_summary, _summary_losses, stats, PRINT_N)
