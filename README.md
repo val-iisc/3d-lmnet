@@ -23,7 +23,7 @@ We use the rendered images from the dataset provided by <a href="https://github.
 Rendered Images (~12.3 GB): http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
 ShapeNet pointclouds (~2.8 GB): [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
 
-Donwload each of the folders, extract them and move them into *data/*.<br>
+Download each of the folders, extract them and move them into *data/*.<br>
 The folder structure should now look something like the following:<br>
 --data/<br>
 &nbsp;&nbsp;--ShapeNetRendering/<br>
@@ -88,16 +88,17 @@ bash scripts/metrics_plm.sh
 The computed metrics will be saved inside *trained_models/plm/metrics/*
 
 ## Demo
-Follow the steps given above to download and extract the validation data.
+Follow the steps detailed above to download the dataset and pre-trained models.
 
-- Run the following to visualize the results:
+- Run the following to visualize the results for latent matching (lm):
 ```shell
-bash scripts/metrics_lm.sh --visualize
+bash scripts/demo_lm.sh
 ```
+You can navigate to the next visualization by pressing 'q'.
 
-- For plm:
+- Run the following to visualize the results for probabilistic latent matching (plm):
 ```shell
-bash scripts/metrics_plm.sh --visualize
+bash scripts/demo_plm.sh
 ```
 
 ## Sample Results
