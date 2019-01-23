@@ -2,6 +2,7 @@ import json
 import os
 import re
 import sys
+import numpy as np
 from itertools import product
 from os import listdir, makedirs
 from os.path import join, exists, isdir, dirname, abspath, basename
@@ -62,3 +63,48 @@ def get_shapenet_models(FLAGS):
 	print
 
 	return train_models, val_models, train_pair_indices, val_pair_indices
+
+
+def get_pix3d_models(FLAGS):
+
+	with open(join(FLAGS.data_dir_imgs, 'pix3d.json'), 'r') as f:
+		models_dict = json.load(f)
+	models = []
+
+	if FLAGS.category == 'all':
+		cats = ['chair','sofa','table']
+	else:
+		cats = [FLAGS.category]
+	
+	# Check for truncation and occlusion before adding a model to the evaluation list
+	for d in models_dict:
+		if d['category'] in cats:
+			if not d['truncated'] and not d['occluded'] and not d['slightly_occluded']:
+				models.append(d)
+
+	print 'Total models = {}\n'.format(len(models))
+	return models
+
+
+def rotate(xyz, xangle=0, yangle=0, zangle=0):
+	rotmat = np.eye(3)
+
+	rotmat=rotmat.dot(np.array([
+		[1.0,0.0,0.0],
+		[0.0,np.cos(xangle),-np.sin(xangle)],
+		[0.0,np.sin(xangle),np.cos(xangle)],
+		]))
+
+	rotmat=rotmat.dot(np.array([
+		[np.cos(yangle),0.0,-np.sin(yangle)],
+		[0.0,1.0,0.0],
+		[np.sin(yangle),0.0,np.cos(yangle)],
+		]))
+
+	rotmat=rotmat.dot(np.array([
+		[np.cos(zangle),-np.sin(zangle),0.0],
+		[np.sin(zangle),np.cos(zangle),0.0],
+		[0.0,0.0,1.0]
+		]))
+
+	return xyz.dot(rotmat)

@@ -1,5 +1,5 @@
 python train_ae.py \
-	--data_dir_pcl data/ShapeNet_pointclouds \
+	--data_dir_pcl data/shapenet/ShapeNet_pointclouds \
 	--exp expts/ae_all_cat \
 	--gpu 1 \
 	--category all \

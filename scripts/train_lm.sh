@@ -1,7 +1,7 @@
 python train_lm.py \
 	--mode lm \
-	--data_dir_imgs data/ShapeNetRendering \
-	--data_dir_pcl data/ShapeNet_pointclouds \
+	--data_dir_imgs data/shapenet/ShapeNetRendering \
+	--data_dir_pcl data/shapenet/ShapeNet_pointclouds \
 	--exp expts/lm_all_cat \
 	--gpu 0 \
 	--ae_logs expts/ae_all_cat \
