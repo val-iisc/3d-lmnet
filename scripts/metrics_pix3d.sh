@@ -5,7 +5,7 @@ exp=trained_models/lm
 eval_set=test
 dataset=pix3d
 data_dir_imgs=data/pix3d
-data_dir_pcl=data/pix3d/pointclouds
+data_dir_pcl=data/pix3d/pix3d_pointclouds
 declare -a categs=("chair" "sofa" "table")
 
 for cat in "${categs[@]}"; do
