@@ -21,7 +21,7 @@ If you find this work useful in your research, please consider citing:
 ## Dataset
 
 ### ShapeNet
-We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories from ShapeNet. For generating the ground truth point clouds, we sample points on the corresponding object meshes from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
+We train and validate our model on the ShapeNet dataset. We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories. For generating the ground truth point clouds, we sample points on the corresponding object meshes from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
 Rendered Images (~12.3 GB): http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
 ShapeNet pointclouds (~2.8 GB): [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
 
@@ -32,7 +32,7 @@ The folder structure should now look something like the following:<br>
 &nbsp;&nbsp;--ShapeNet_pointclouds/<br>
 
 ### Pix3D
-We evaluate the generalization capability of our model vy testing it on the real-world <a href="https://github.com/xingyuansun/pix3d">pix3d dataset</a>. For the ground truth point clouds, we sample 1024 points on the provided meshes. Data download links are provided below:
+We evaluate the generalization capability of our model by testing it on the real-world <a href="https://github.com/xingyuansun/pix3d">pix3d dataset</a>. For the ground truth point clouds, we sample 1024 points on the provided meshes. Data download links are provided below:<br>
 Pix3D dataset (~20 GB): Follow the instructions in [https://github.com/xingyuansun/pix3d]
 Pix3D pointclouds (~13 MB): [https://drive.google.com/open?id=1RZakyBu9lPbG85SyconBn4sR8r2faInV]
 
