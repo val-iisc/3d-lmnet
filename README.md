@@ -19,15 +19,32 @@ If you find this work useful in your research, please consider citing:
 ![Overview of 3D-LMNet](images/approach_overview.png)
 
 ## Dataset
-We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories. For generating the ground truth point clouds, we sample points on the corresponding object meshed from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
+
+### ShapeNet
+We use the rendered images from the dataset provided by <a href="https://github.com/chrischoy/3D-R2N2" target="_blank" >3d-r2n2</a>, which consists of 13 object categories from ShapeNet. For generating the ground truth point clouds, we sample points on the corresponding object meshes from ShapeNet. We use the dataset split provided by r2n2 in all the experiments. Data download links are provided below:<br>
 Rendered Images (~12.3 GB): http://cvgl.stanford.edu/data2/ShapeNetRendering.tgz<br>
 ShapeNet pointclouds (~2.8 GB): [https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g](https://drive.google.com/open?id=1cfoe521iTgcB_7-g_98GYAqO553W8Y0g)
 
-Download each of the folders, extract them and move them into *data/*.<br>
+Download each of the folders, extract them and move them into *data/shapenet/*.<br>
 The folder structure should now look something like the following:<br>
---data/<br>
+--data/shapenet/<br>
 &nbsp;&nbsp;--ShapeNetRendering/<br>
 &nbsp;&nbsp;--ShapeNet_pointclouds/<br>
+
+### Pix3D
+We evaluate the generalization capability of our model vy testing it on the real-world <a href="https://github.com/xingyuansun/pix3d">pix3d dataset</a>. For the ground truth point clouds, we sample 1024 points on the provided meshes. Data download links are provided below:
+Pix3D dataset (~20 GB): Follow the instructions in [https://github.com/xingyuansun/pix3d]
+Pix3D pointclouds (~13 MB): [https://drive.google.com/open?id=1RZakyBu9lPbG85SyconBn4sR8r2faInV]
+
+Download each of the folders, extract them.<br>
+The folder structure should now look something like the following:<br>
+--data/pix3d/<br>
+&nbsp;&nbsp;--img_cleaned_input/<br>
+&nbsp;&nbsp;--img/<br>
+&nbsp;&nbsp;--mask/<br>
+&nbsp;&nbsp;--model/<br>
+&nbsp;&nbsp;--pix3d_pointclouds/<br>
+&nbsp;&nbsp;--pix3d.json<br>
 
 ## Usage
 Install [TensorFlow](https://www.tensorflow.org/install/). We recommend version 1.3 so that the additional TensorFlow ops can be compiled. The code provided has been tested with Python 2.7, TensorFlow 1.3, and CUDA 8.0. The following steps need to be performed to run the codes given in this repository:
@@ -75,32 +92,47 @@ Extract it and move it into *trained_models/*
 ## Evaluation
 Follow the steps detailed above to download the dataset and pre-trained models.
 
+### ShapeNet
 - For computing the Chamfer and EMD metrics reported in the paper (all 13 categories), run:
 ```shell
-bash scripts/metrics_lm.sh
+bash scripts/metrics_shapenet_lm.sh
 ```
-The computed metrics will be saved inside *trained_models/lm/metrics/*
+The computed metrics will be saved inside *trained_models/lm/metrics_shapenet/*
 
 - For the plm setup (chair category), run:
 ```shell
-bash scripts/metrics_plm.sh
+bash scripts/metrics_shapenet_plm.sh
 ```
-The computed metrics will be saved inside *trained_models/plm/metrics/*
+The computed metrics will be saved inside *trained_models/plm/metrics_shapenet/*
+
+### Pix3D
+- For computing the Chamfer and EMD metrics reported in the paper (3 categories) for the real-world Pix3D dataset, run:
+```shell
+bash scripts/metrics_pix3d.sh
+```
+The computed metrics will be saved inside *trained_models/lm/metrics_pix3d/*
 
 ## Demo
 Follow the steps detailed above to download the dataset and pre-trained models.
 
+###  ShapeNet
 - Run the following to visualize the results for latent matching (lm):
 ```shell
-bash scripts/demo_lm.sh
+bash scripts/demo_shapenet_lm.sh
 ```
-You can navigate to the next visualization by pressing 'q'.
+You can navigate to the next visualization by pressing 'q'. Close visualization using back arrow.
 
 - Run the following to visualize the results for probabilistic latent matching (plm):
 ```shell
-bash scripts/demo_plm.sh
+bash scripts/demo_shapenet_plm.sh
 ```
 
+###  Pix3D
+- Run the following to visualize the results on the real-world Pix3D dataset:
+```shell
+bash scripts/demo_pix3d.sh
+```
+You can navigate to the next visualization by pressing 'q'. Close visualization using back arrow.
 ## Sample Results
 Below are a few sample reconstructions from our trained model.
 ![3D-LMNet_sample_results](images/sample_results.png)
