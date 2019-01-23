@@ -141,6 +141,6 @@ Below are a few sample reconstructions from our trained model tested on ShapeNet
 ![3D-LMNet_ShapeNet_results](images/shapenet_results.png)
 
 ### Pix3D
-Below are a few sample reconstructions from our trained model tested on real-world Pix3D dataset. Note that we mask out the background using the provided masks before sending the images through the network.
+Below are a few sample reconstructions from our trained model tested on real-world Pix3D dataset. Note that we mask out the background using the provided masks before passing the images through the network.
 ![3D-LMNet_Pix3D_results](images/pix3d_results.png)
 
