@@ -45,18 +45,18 @@ make
 ## Training
 - To train the point-cloud auto-encoder, run:
 ```shell
-bash scripts/train_ae.py
+bash scripts/train_ae.sh
 ```
 Note that the auto-encoder needs to be trained before training either of the latent matching setups.
 
 - To train the latent matching (lm) setup, run:
 ```shell
-bash scripts/train_lm.py
+bash scripts/train_lm.sh
 ```
 
 - To train the probabilistic latent matching (plm) setup, run:
 ```shell
-bash scripts/train_plm.py
+bash scripts/train_plm.sh
 ```
 
 ## Trained Models
