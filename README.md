@@ -136,6 +136,11 @@ bash scripts/demo_pix3d.sh
 ```
 You can navigate to the next visualization by pressing 'q'. Close visualization using back arrow.
 ## Sample Results
-Below are a few sample reconstructions from our trained model.
-![3D-LMNet_sample_results](images/sample_results.png)
+### ShapeNet
+Below are a few sample reconstructions from our trained model tested on ShapeNet.
+![3D-LMNet_ShapeNet_results](images/shapenet_results.png)
+
+### Pix3D
+Below are a few sample reconstructions from our trained model tested on real-world Pix3D dataset. Note that we mask out the background using the provided masks before sending the images through the network.
+![3D-LMNet_Pix3D_results](images/pix3d_results.png)
 
