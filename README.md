@@ -6,7 +6,7 @@ Accepted at *British Machine Vision Conference (BMVC 2018)*
 If you find this work useful in your research, please consider citing:
 ```
 @inproceedings{mandikal20183dlmnet,
- author = {Mandikal, Priyanka and K L, Navaneet and Agarwal, Mayank and Babu, R Venkatesh},
+ author = {Mandikal, Priyanka and Navaneet, K L and Agarwal, Mayank and Babu, R Venkatesh},
  booktitle = {Proceedings of the British Machine Vision Conference ({BMVC})},
  title = {{3D-LMNet}: Latent Embedding Matching for Accurate and Diverse 3D Point Cloud Reconstruction from a Single Image},
  year = {2018}
