@@ -122,7 +122,7 @@ Follow the steps detailed above to download the dataset and pre-trained models.
 ```shell
 bash scripts/demo_shapenet_lm.sh
 ```
-You can navigate to the next visualization by pressing 'q'. Close visualization using back arrow.
+You can navigate to the next visualization by pressing 'q'. Close visualization using back arrow. You can visualize results for different categories by changing the value of the category flag.
 
 - Run the following to visualize the results for probabilistic latent matching (plm):
 ```shell
